@@ -108,10 +108,8 @@ test('a demo file is read into the page, names and all', async ({ page }) => {
 
   const rows = page.locator('.compare-row');
   await expect(rows).toHaveCount(26);
-  // The name the record carries, which is what the row is titled with.
-  await expect(
-    rows.first().locator('.compare-cell__structure'),
-  ).toHaveAttribute('title', 'aspirin');
+  // The name the record carries, under the drawing of it.
+  await expect(rows.first().locator('.compare-name')).toHaveText('aspirin');
   await expect(rows.first().locator('.compare-cell__number').nth(2)).toHaveText(
     '180.16',
     PREDICTED,

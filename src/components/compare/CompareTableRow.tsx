@@ -82,6 +82,7 @@ export const CompareTableRow = memo(function CompareTableRow(
           width={DRAWING.width}
           height={DRAWING.height}
         />
+        <span className="compare-name">{row.label}</span>
         {row.duplicateOf === null ? null : (
           <span className="compare-repeat" title="Already in the set above">
             repeat

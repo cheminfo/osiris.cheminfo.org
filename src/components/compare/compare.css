@@ -234,6 +234,20 @@
   width: 96px;
 }
 
+/* The name the source gave the molecule, under its drawing. A set read from an
+   SD file is read by its names, so the column shows them rather than keeping
+   them in a tooltip; a long one is cut here rather than widening the column,
+   and the cell's own title still carries it whole. */
+.compare-name {
+  display: block;
+  overflow: hidden;
+  max-width: 96px;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .compare-repeat,
 .compare-problem {
   display: block;
