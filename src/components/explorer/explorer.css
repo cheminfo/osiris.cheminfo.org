@@ -1,0 +1,56 @@
+/*
+ * The explorer's own layout: the canvas on the left, what it predicts on the
+ * right, and the paragraph that says where the numbers come from.
+ *
+ * No colour is chosen here. The neutrals come from the family's `chrome.css`,
+ * and the one accent is the site's own `--accent`.
+ */
+
+/* The canvas grows with the card rather than sitting in a fixed box: an editor
+   the height of a thumbnail is an editor nobody draws a steroid in. */
+.explorer-editor {
+  flex: 1 1 auto;
+}
+
+.explorer-loading {
+  display: flex;
+  min-height: 340px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  gap: 8px;
+}
+
+.explorer-examples {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* Thomas Sander's own first paragraph, which is what a reader needs before the
+   colours mean anything; the rest of it is a page of its own. */
+.explorer-lead {
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.explorer-lead p {
+  margin: 0;
+}
+
+.explorer-lead p + p {
+  margin-top: 6px;
+}
+
+.explorer-actions {
+  display: flex;
+  justify-content: flex-end;
+}

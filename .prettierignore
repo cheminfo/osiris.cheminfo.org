@@ -1,0 +1,11 @@
+CHANGELOG.md
+node_modules
+package-lock.json
+coverage
+dist
+dist-mount
+playwright-report
+test-results
+public/openchemlib-resources.json
+# Thomas Sander's own words, carried verbatim: nothing reformats them.
+src/data/method.md

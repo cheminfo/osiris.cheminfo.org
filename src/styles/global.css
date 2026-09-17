@@ -1,0 +1,191 @@
+:root {
+  /* The neutrals, the geometry and the type come from react-cheminfo's
+     chrome.css, and the two colours this site owns from <SiteTheme />. */
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * Blueprint's own focus selectors (.bp6-tag:focus and friends) out-specify a
+ * plain universal rule, so an interactive tag keeps a blue ring on click
+ * without the !important here.
+ */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+/* The 15px goes on `body`, never on `html`: `rem` resolves against the root, so
+   putting it there would shrink every shared measurement by 6.25%. */
+body {
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A form control does not inherit the page font: it would otherwise be set in
+   the UA's Helvetica beside text in ours. */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* The tool fills the screen it is opened on and grows past it when what is on
+   the page needs more room. A fixed height would instead let flex shrink the
+   panels below their own content, and a Blueprint callout compressed to a few
+   pixels paints its text over whatever follows it. */
+.app-screen {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
+.app-screen > main {
+  flex: 1 1 auto;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+/* A column of panels, for a page whose parts stack rather than sit side by
+   side. */
+.stack {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/*
+ * One pane holds what the reader edits, the other reads it back. The two are
+ * one layout, written once here rather than as several grids that drift apart.
+ */
+.pane-grid {
+  display: grid;
+  min-height: 0;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* A pane scrolls inside itself rather than stretching the page. */
+.pane {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* A panel keeps its own rhythm whatever is inside it. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Prose is read, not scanned: a line past about 70 characters loses the eye on
+   its way back to the left edge. */
+.prose {
+  max-width: 44rem;
+}
+
+@media (min-width: 900px) {
+  .pane-grid {
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  }
+}
+
+/* A phone has no width to spend on nested gutters: the page and its cards keep
+   just enough to separate an edge from a line of text. */
+@media (max-width: 600px) {
+  .app-main {
+    padding: 4px;
+  }
+
+  .app-main .bp6-card {
+    padding: 8px;
+  }
+}
+
+/*
+ * The method page is somebody else's document, carried whole. It reads as prose
+ * and prints as prose, so the only rules it needs are the ones that keep a
+ * figure inside the column and say who wrote what follows.
+ */
+.method-attribution {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* A figure sits on its own line and never runs wider than the text it explains.
+   It carries its own width and height as attributes, so `height: auto` keeps it
+   in proportion once the column is the narrower of the two. */
+.method-figure {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 4px 0;
+}
+
+/* The method page and the property panel are both worth printing. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: var(--surface);
+  }
+
+  a[href]::after {
+    content: '';
+  }
+
+  /* A document is printed to be read on paper: the card's chrome adds nothing,
+     a figure split over two sheets is unreadable, and a heading alone at the
+     foot of a page has left its section behind. */
+  .method-page {
+    max-width: none;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .method-figure {
+    break-inside: avoid;
+  }
+
+  .method-page h1,
+  .method-page h2 {
+    break-after: avoid;
+  }
+}

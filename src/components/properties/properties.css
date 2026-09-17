@@ -1,0 +1,200 @@
+/*
+ * The property panel: the four risk squares, the ten bars, and the explanation
+ * a square opens.
+ *
+ * Every colour here is a token. The neutrals and the geometry come from the
+ * family's `chrome.css`, the two colours the site owns come from `<SiteTheme>`,
+ * and the three status colours below are the family's shared semantic ones —
+ * the same values on every site, never retuned, per rules/visual-identity.md.
+ * They are declared here because nothing else on the site needs them yet.
+ */
+
+:root {
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warning: #d97706;
+}
+
+/* ── The panel ──────────────────────────────────────────────────────────── */
+
+.property-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.property-panel__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+/* A name from an SD field, or the molecule's own SMILES when it carried none:
+   either can be long, and neither is worth pushing the numbers off the card. */
+.property-panel__label {
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.risk-panel,
+.property-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.risk-panel h5,
+.property-section h5 {
+  margin: 0;
+}
+
+/* ── The four risks ─────────────────────────────────────────────────────── */
+
+.risk-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.risk-square {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 0;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  gap: 8px;
+  text-align: left;
+}
+
+button.risk-square {
+  cursor: pointer;
+}
+
+button.risk-square:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-sunken);
+}
+
+button.risk-square[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, white);
+}
+
+/* A cell of the comparison table: the square alone, centred in its column. */
+.risk-square--compact {
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  background: none;
+}
+
+.risk-square__swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 3px;
+  background: var(--text-faint);
+}
+
+/* The three levels are the three the drug score multiplies by — ×1, ×0.8, ×0.6
+   — so the colour says what the score already counted. `unknown` is the
+   library's own "the tables did not load", which is never green. */
+.risk-square__swatch[data-level='none'] {
+  background: var(--success);
+}
+
+.risk-square__swatch[data-level='low'] {
+  background: var(--warning);
+}
+
+.risk-square__swatch[data-level='high'] {
+  background: var(--danger);
+}
+
+.risk-square__swatch[data-level='unknown'] {
+  background: var(--text-faint);
+}
+
+.risk-square__swatch[data-level='pending'] {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--border),
+    var(--border) 3px,
+    var(--surface) 3px,
+    var(--surface) 6px
+  );
+}
+
+.risk-square__text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.risk-square__name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.risk-square__level {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* ── Why a risk came back as it did ─────────────────────────────────────── */
+
+.risk-findings {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  gap: 10px;
+}
+
+.risk-finding__heading {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.risk-finding__drawings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.risk-finding__figure {
+  margin: 0;
+}
+
+.risk-finding__figure > figcaption {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* The panel is worth printing beside the structure. */
+@media print {
+  .risk-findings {
+    break-inside: avoid;
+  }
+}

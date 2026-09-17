@@ -1,0 +1,48 @@
+# Port-published deployment — publishes PORT on the host (the default mode).
+#
+# Used when COMPOSE_FILE is unset in .env. Run: docker compose up -d
+
+services:
+  osiris:
+    # Use the released image by default. To build locally instead, run:
+    #   docker compose up -d --build
+    image: ${IMAGE_NAME:-ghcr.io/cheminfo/osiris.cheminfo.org}:${IMAGE_TAG:-latest}
+    build: .
+    # What the server's deploy script probes before it keeps a new container.
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:80/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      # The pages served are written here at startup, so the mount can be
+      # stamped into them while the image filesystem stays read-only.
+      - /public:rw,noexec,nosuid,size=128m
+      - /tmp:rw,noexec,nosuid,size=16m
+    environment:
+      # Where this deployment is mounted. `/osiris/` serves this same image
+      # under a path of a shared host — no rebuild, no second tag.
+      BASE_PATH: ${BASE_PATH:-/}
+      # The analytics snippet, verbatim. Unset, nothing is loaded.
+      TRACKING_SCRIPT: ${TRACKING_SCRIPT:-}
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 256
+    ulimits:
+      core: 0
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    ports:
+      - '127.0.0.1:${PORT:-10620}:80'

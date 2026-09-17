@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Where this deployment is mounted. The build itself carries no mount —
+         its assets are relative — so this is what resolves them, and what the
+         page reads its own mount back off. The container rewrites it from
+         BASE_PATH when it starts, which is how one image serves both this
+         site's own host and a path of a shared one. It has to come before
+         anything it resolves. -->
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Where the title, the description, the canonical address, the social
+         card and the structured data of the address being served are written.
+         The build fills one copy of this page per address; the dev server
+         fills it from the home page. -->
+    <!--cheminfo:head-->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- Where the crawl path a visitor with no JavaScript reads is written. -->
+    <!--cheminfo:body-->
+  </body>
+</html>

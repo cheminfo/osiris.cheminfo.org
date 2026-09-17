@@ -1,0 +1,246 @@
+/*
+ * The comparison page: the two inputs, the figure, and the table under it.
+ * Every colour is a token — the neutrals from the family's `chrome.css`, the
+ * two this site owns from `<SiteTheme>`. The table is the one part that needs
+ * rules of its own: fourteen numeric columns do not wrap, so it scrolls
+ * sideways inside its card rather than stretching the page.
+ */
+
+/* ── The page's two columns ───────────────────────────────────────────── */
+.compare-body {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1200px) {
+  .compare-body {
+    grid-template-columns: minmax(0, 1fr) 24rem;
+  }
+}
+
+.compare-side {
+  min-width: 0;
+}
+
+.compare-status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compare-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.compare-problems {
+  padding-left: 1.1rem;
+  margin: 0;
+}
+
+/* ── The two inputs ───────────────────────────────────────────────────── */
+.compare-editor {
+  min-width: 0;
+}
+
+.compare-paste {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  resize: vertical;
+}
+
+/* The drop zone fills its box, so the box is what gives it a height. Only the
+   file-only card draws one: where the list box is there, the drop target is
+   the box itself. */
+.compare-dropzone {
+  height: 184px;
+}
+
+/* Adding the list and opening a file are the same card's two buttons, so they
+   share its last row. */
+.compare-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── The figure ───────────────────────────────────────────────────────── */
+.compare-plot {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compare-plot__figure {
+  min-width: 0;
+}
+
+.compare-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.compare-axis-tags {
+  display: flex;
+  flex: 1 1 22rem;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* A capsule per column: in, or out. The brand tint says "in", as it says "you
+   are here" in the header. */
+.axis-tag {
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.axis-tag:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.axis-tag[data-active='true'] {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 12%, white);
+  color: var(--accent);
+}
+
+.compare-color {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.compare-color__label {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.compare-legend {
+  min-width: 11rem;
+}
+
+.compare-kept {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.compare-tooltip__name {
+  font-weight: 600;
+}
+
+/* ── The table ────────────────────────────────────────────────────────── */
+.compare-table-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compare-table-head h5 {
+  margin: 0;
+}
+
+/* Fourteen columns and a drawing do not fit a phone, and wrapping them loses
+   the one thing a comparison table is for: reading down a column. */
+.compare-scroller {
+  overflow-x: auto;
+  max-height: 34rem;
+  overflow-y: auto;
+}
+
+.compare-table {
+  /* Grow to the columns rather than squeeze them: the scroller is what makes
+     the last of them reachable. */
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.compare-table th {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.compare-table td {
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.compare-row {
+  cursor: pointer;
+}
+
+.compare-row:hover,
+.compare-row[data-hovered='true'] {
+  background: var(--surface-sunken);
+}
+
+.compare-row[data-selected='true'] {
+  background: color-mix(in oklab, var(--accent) 10%, white);
+}
+
+.compare-cell__structure {
+  width: 96px;
+}
+
+.compare-repeat,
+.compare-problem {
+  display: block;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+}
+
+.compare-cell__number {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.compare-cell__risk {
+  text-align: center;
+}
+
+.compare-cell__remove {
+  text-align: right;
+}
+
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

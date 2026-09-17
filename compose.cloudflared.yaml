@@ -1,0 +1,79 @@
+# Cloudflare Tunnel deployment — no port published on the host.
+#
+# Cloudflare dashboard (https://dash.cloudflare.com):
+#   Networks → Tunnels → Create a tunnel → Cloudflared connector →
+#   copy the token into .env as TUNNEL_TOKEN=... → open the tunnel →
+#   Published applications → Add an application with
+#   Service = HTTP and URL = osiris:80.
+#
+# Select with COMPOSE_FILE=compose.cloudflared.yaml in .env, then:
+#   docker compose up -d
+
+services:
+  osiris:
+    # Use the released image by default. To build locally instead, run:
+    #   docker compose up -d --build
+    image: ${IMAGE_NAME:-ghcr.io/cheminfo/osiris.cheminfo.org}:${IMAGE_TAG:-latest}
+    build: .
+    # What the server's deploy script probes before it keeps a new container.
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:80/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      # The pages served are written here at startup, so the mount can be
+      # stamped into them while the image filesystem stays read-only.
+      - /public:rw,noexec,nosuid,size=128m
+      - /tmp:rw,noexec,nosuid,size=16m
+    environment:
+      # Where this deployment is mounted. `/osiris/` serves this same image
+      # under a path of a shared host — no rebuild, no second tag.
+      BASE_PATH: ${BASE_PATH:-/}
+      # The analytics snippet, verbatim. Unset, nothing is loaded.
+      TRACKING_SCRIPT: ${TRACKING_SCRIPT:-}
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 256
+    ulimits:
+      core: 0
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.9.0
+    # The token is interpolated from .env, which docker compose reads by
+    # itself: no env_file entry, so a checkout with no .env still parses on
+    # every version of the CLI.
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    init: true
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 128m
+    cpus: 1
+    pids_limit: 64
+    ulimits:
+      core: 0
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '2'
+    depends_on:
+      - osiris

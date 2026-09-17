@@ -1,0 +1,61 @@
+{
+  "name": "osiris-cheminfo-org",
+  "version": "1.0.0",
+  "description": "Predicted toxicity risks and physicochemical properties of a drawn molecule, and of a whole set at once.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "build-mount": "node scripts/buildMounted.ts",
+    "check-deploy": "node node_modules/react-cheminfo/bin/check-deploy.mjs",
+    "check-tokens": "node node_modules/react-cheminfo/bin/check-tokens.mjs src",
+    "check-types": "tsc --noEmit",
+    "dev": "vite",
+    "eslint": "eslint .",
+    "eslint-fix": "eslint . --fix",
+    "og-image": "node scripts/generateOgImage.ts",
+    "prettier": "prettier --check .",
+    "prettier-write": "prettier --write .",
+    "preview": "vite preview",
+    "preview-mount": "vite preview --config vite.mount.config.ts",
+    "test": "npm run test-only && npm run check-types && npm run check-tokens && npm run check-deploy && npm run eslint && npm run prettier",
+    "test-e2e": "playwright test",
+    "test-e2e-ui": "playwright test --ui",
+    "test-only": "vitest run --coverage"
+  },
+  "overrides": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^6.18.0",
+    "@blueprintjs/icons": "^6.13.0",
+    "@preact/signals-react": "^3.12.0",
+    "ensure-string": "^2.0.0",
+    "openchemlib": "^9.25.0",
+    "react": "^19.2.8",
+    "react-cheminfo": "file:../../react-cheminfo",
+    "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0",
+    "react-mf": "^3.1.1",
+    "react-ocl": "^8.7.2",
+    "react-science": "^23.1.1",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-istanbul": "^4.1.10",
+    "@zakodium/tsconfig": "^1.0.5",
+    "eslint": "^9.39.5",
+    "eslint-config-zakodium": "^20.1.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}

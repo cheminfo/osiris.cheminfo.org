@@ -1,0 +1,25 @@
+node_modules
+coverage
+dist
+# Built by the mount-path check: the same site, served under a sub-path.
+dist-mount
+.DS_Store
+.idea
+.claude
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Local environment
+.env
+
+# Playwright
+playwright-report
+test-results
+
+# Written into public/ by the OpenChemLib resources plugin on every build.
+public/openchemlib-resources.json
+
+.deploy

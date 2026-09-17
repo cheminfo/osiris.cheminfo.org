@@ -1,0 +1,126 @@
+/*
+ * The ten predicted numbers: a name, a bar and a value on one line each.
+ *
+ * The bar's colour is the only thing here that is not a neutral, and it is
+ * mixed from the three shared status tokens — there is no hex code in this
+ * file and none in the component that sets the fill's length.
+ */
+
+.property-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.property-row {
+  display: grid;
+  align-items: center;
+  gap: 0 10px;
+  grid-template-columns: minmax(6rem, 8.5rem) minmax(4rem, 1fr) minmax(
+      3.5rem,
+      auto
+    );
+}
+
+.property-row__label {
+  font-size: 0.8125rem;
+}
+
+.property-row__unit {
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+}
+
+.property-row__unit::before {
+  content: ' ';
+}
+
+.property-row__value {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* The bar carries its threshold label under it, so the row keeps room for one
+   whether or not that property has a published rule of thumb. */
+.property-bar {
+  position: relative;
+  padding-bottom: 0.875rem;
+}
+
+.property-bar__track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.property-bar__fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 2px;
+  border-radius: inherit;
+
+  /* The green-to-red ramp, mixed from the three shared status colours rather
+     than computed in JavaScript, which would put a hex code in a component.
+     `color-mix` clamps a percentage into 0–100%, so the first mix is pure amber
+     from the middle of the scale up and the second is pure amber down to it:
+     red → amber → green, with no muddy midpoint. */
+  --ramp-low: color-mix(
+    in oklab,
+    var(--warning) calc(var(--fitness, 1) * 200%),
+    var(--danger)
+  );
+
+  background: color-mix(
+    in oklab,
+    var(--success) calc((var(--fitness, 1) - 0.5) * 200%),
+    var(--ramp-low)
+  );
+}
+
+/* Where a diverging bar grows from. A fill that starts a quarter of the way
+   along says nothing without it. */
+.property-bar__origin {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 1px;
+  background: var(--border-strong);
+}
+
+/* The published rule of thumb: cLogP ≤ 5, logS > −4, molweight < 450,
+   drug-likeness > 0. */
+.property-bar__mark {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--text-faint);
+}
+
+.property-bar__threshold {
+  position: absolute;
+  bottom: 0;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  line-height: 1;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* A narrow card has no width to spend on a bar: the name and the number are
+   what a phone reads, and the bar takes the line under them. */
+@media (max-width: 480px) {
+  .property-row {
+    grid-template-columns: minmax(0, 1fr) minmax(3.5rem, auto);
+  }
+
+  .property-row__bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
