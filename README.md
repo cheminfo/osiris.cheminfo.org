@@ -34,6 +34,19 @@ Each page reads its own parameters from the query string:
 | `color`   | `/compare` | the property the lines are coloured by                             |
 | `focus`   | `/compare` | the idCode of the row whose properties are shown                   |
 
+Two files are shipped for a reader who has none of their own, linked from the
+list card and served at addresses of their own:
+
+| File                     | What it holds                                    |
+| ------------------------ | ------------------------------------------------ |
+| `/demo/traded-drugs.sdf` | 26 drugs on the market, each record named        |
+| `/demo/solvents.smi`     | 34 laboratory solvents, one per line with a name |
+
+A click reads one into the page; ⌘-clicking or saving it gives a small example
+of either format to write your own against. Both are written by
+`npm run demo-files` rather than by hand, so a structure that does not read
+stops the script instead of reaching a visitor.
+
 And every page takes the family's own sharing vocabulary:
 
 | Parameter | Meaning                                                                                                                                |
@@ -76,6 +89,7 @@ npm run test       # unit tests, types, tokens, deploy contract, lint, format
 npm run test-e2e   # Playwright, against the built site
 npm run build      # dist/, one HTML file per address, plus sitemap and robots
 npm run og-image   # redraw public/og.png from the site's own record
+npm run demo-files # rewrite public/demo from the structures the script lists
 ```
 
 The port is 10620 and it is not a typo. This site was created on 2026-09-17,

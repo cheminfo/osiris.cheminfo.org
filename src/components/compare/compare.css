@@ -53,6 +53,19 @@
   resize: vertical;
 }
 
+/* The list box is the drop target, so it takes the whole height the card has
+   to give rather than leaving a band of card under it that reads as a gap and
+   accepts a file anyway. */
+.compare-list-drop {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 11rem;
+}
+
+.compare-list-drop .compare-paste {
+  height: 100%;
+}
+
 /* The drop zone fills its box, so the box is what gives it a height. Only the
    file-only card draws one: where the list box is there, the drop target is
    the box itself. */
@@ -143,6 +156,12 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.8125rem;
+}
+
+.compare-hint {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 0.75rem;
 }
 
 .compare-tooltip__name {

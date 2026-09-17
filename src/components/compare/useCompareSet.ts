@@ -16,6 +16,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { errorMessage } from 'react-cheminfo/core';
 
+import type { DemoFile } from '../../input/demoFiles.ts';
+import { demoFileUrl } from '../../input/demoFiles.ts';
 import type { LoadStatus, MoleculeRow } from '../../state/index.ts';
 import {
   clearMolecules,
@@ -81,6 +83,11 @@ export interface CompareSet {
    * @param file - The file, whatever its extension says it is.
    */
   addFile: (file: File) => void;
+  /**
+   * Add one of the files the site ships.
+   * @param demo - The file, as the links name it.
+   */
+  addDemo: (demo: DemoFile) => void;
   /**
    * Add what the editor is holding.
    * @param idCode - The editor's value: an idCode, its coordinates after a space.
@@ -174,6 +181,12 @@ export function useCompareSet(): CompareSet {
     },
     [read],
   );
+  const addDemo = useCallback(
+    (demo: DemoFile) => {
+      void read({ url: demoFileUrl(demo), name: demo.file });
+    },
+    [read],
+  );
   const addStructure = useCallback(
     (idCode: string) => {
       void addDrawn(idCode, publish);
@@ -204,6 +217,7 @@ export function useCompareSet(): CompareSet {
     reading: readProgress.value,
     addText,
     addFile,
+    addDemo,
     addStructure,
     remove,
     clear,

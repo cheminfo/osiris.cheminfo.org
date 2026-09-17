@@ -10,6 +10,7 @@
     "check-deploy": "node node_modules/react-cheminfo/bin/check-deploy.mjs",
     "check-tokens": "node node_modules/react-cheminfo/bin/check-tokens.mjs src",
     "check-types": "tsc --noEmit",
+    "demo-files": "node scripts/buildDemoFiles.ts",
     "dev": "vite",
     "eslint": "eslint .",
     "eslint-fix": "eslint . --fix",

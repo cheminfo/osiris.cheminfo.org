@@ -47,6 +47,8 @@ export {
 } from './compareRows.ts';
 export type { SharePlan } from './compareSet.ts';
 export { restoreRows, sharePlan, storedOf } from './compareSet.ts';
+export { CompareDemoLinks } from './CompareDemoLinks.tsx';
+export type { CompareDemoLinksProps } from './CompareDemoLinks.tsx';
 export { CompareDownload } from './CompareDownload.tsx';
 export type { CompareDownloadProps } from './CompareDownload.tsx';
 export { CompareEmpty } from './CompareEmpty.tsx';

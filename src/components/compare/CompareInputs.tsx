@@ -22,6 +22,7 @@ import { DropZone, DropZoneContainer } from 'react-science/ui';
 
 import { ACCEPTED_FILES } from '../../input/acceptedFiles.ts';
 
+import { CompareDemoLinks } from './CompareDemoLinks.tsx';
 import type { CompareSet } from './useCompareSet.ts';
 
 /** What the file picker puts in its own `accept`, from the one list. */
@@ -121,29 +122,33 @@ function ListCard(props: CompareInputsProps): ReactElement | null {
           : 'Open a file'}
       </H5>
       {pasting ? (
-        <DropZoneContainer
-          accept={ACCEPTED_FILES}
-          multiple={false}
-          disabled={!opening}
-          onDrop={(files) => {
-            takeFile(files[0]);
-          }}
-        >
-          <TextArea
-            className="compare-paste"
-            value={text}
-            rows={9}
-            fill
-            spellCheck={false}
-            autoCapitalize="off"
-            autoCorrect="off"
-            autoComplete="off"
-            placeholder={'CCO\nc1ccccc1 benzene\nCC(=O)Oc1ccccc1C(=O)O aspirin'}
-            onChange={(event) => {
-              setText(event.target.value);
+        <div className="compare-list-drop">
+          <DropZoneContainer
+            accept={ACCEPTED_FILES}
+            multiple={false}
+            disabled={!opening}
+            onDrop={(files) => {
+              takeFile(files[0]);
             }}
-          />
-        </DropZoneContainer>
+          >
+            <TextArea
+              className="compare-paste"
+              value={text}
+              rows={9}
+              fill
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+              placeholder={
+                'CCO\nc1ccccc1 benzene\nCC(=O)Oc1ccccc1C(=O)O aspirin'
+              }
+              onChange={(event) => {
+                setText(event.target.value);
+              }}
+            />
+          </DropZoneContainer>
+        </div>
       ) : (
         <div className="compare-dropzone">
           <DropZone
@@ -173,6 +178,7 @@ function ListCard(props: CompareInputsProps): ReactElement | null {
           each record carries.
         </p>
       ) : null}
+      {opening ? <CompareDemoLinks set={set} /> : null}
       <div className="compare-add">
         {pasting ? (
           <Button
@@ -185,7 +191,9 @@ function ListCard(props: CompareInputsProps): ReactElement | null {
             }}
           />
         ) : null}
-        {opening ? (
+        {/* The empty drop zone carries a picker of its own, so this button is
+            the one the box does not have. */}
+        {opening && pasting ? (
           <>
             <Button
               icon="folder-open"
@@ -196,6 +204,7 @@ function ListCard(props: CompareInputsProps): ReactElement | null {
             <input
               ref={picker}
               hidden
+              className="compare-file-input"
               type="file"
               accept={ACCEPTED_EXTENSIONS}
               onChange={(event) => {

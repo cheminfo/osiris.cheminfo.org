@@ -15,6 +15,7 @@
 import { expect, test } from '@playwright/test';
 
 import { MOUNT_PATH, MOUNT_PREVIEW_PORT } from '../scripts/mountedSite.ts';
+import { DEMO_FILES } from '../src/input/demoFiles.ts';
 import { METHOD_FIGURES } from '../src/method/figures.ts';
 import { PAGE_ROUTES } from '../src/seo/routes.ts';
 
@@ -68,6 +69,26 @@ test('the mounted method page asks for its figures under the mount, and gets the
 
   await page.waitForLoadState('networkidle');
   expect(missing).toStrictEqual([]);
+});
+
+test('a demo file is fetched from under the mount, not from the host', async ({
+  page,
+}) => {
+  const drugs = DEMO_FILES[0];
+  if (drugs === undefined) throw new Error('the site ships no demo file');
+  await page.goto(`${MOUNTED}/compare`);
+
+  const link = page.getByRole('link', { name: drugs.label });
+  await expect(link).toHaveAttribute(
+    'href',
+    `${MOUNT_PATH}/demo/${drugs.file}`,
+  );
+
+  await link.click();
+
+  // The rows stand before their numbers do, so this is the read, not the
+  // prediction: an address off the host's root would 404 and the set stay empty.
+  await expect(page.locator('.compare-row')).toHaveCount(drugs.count);
 });
 
 test('the mount is where the pages say they are, and the nav keeps it', async ({

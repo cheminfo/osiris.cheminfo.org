@@ -16,7 +16,11 @@ import type {
   ParallelRange,
   ParallelRanges,
 } from 'react-cheminfo/core';
-import { parallelIncludedMask, resolveColorScale } from 'react-cheminfo/core';
+import {
+  parallelHasRange,
+  parallelIncludedMask,
+  resolveColorScale,
+} from 'react-cheminfo/core';
 
 import type { PredictionInput, RiskType } from '../../osiris/index.ts';
 import type { UsePredictionsResult } from '../../osiris/ui/index.ts';
@@ -58,12 +62,12 @@ export interface CompareView {
   colorValues: Float64Array;
   /** The ramp it is read on. */
   scale: ColorScale;
-  /** The interval each axis keeps. */
+  /** What each axis keeps: nothing, one interval, or several. */
   ranges: ParallelRanges;
   /** Whether any axis carries one. */
   brushed: boolean;
-  /** Keep an interval on one axis, or `null` to keep all of it. */
-  setRange: (axisId: string, range: ParallelRange | null) => void;
+  /** Keep these intervals on one axis, or none of them to keep all of it. */
+  setRange: (axisId: string, kept: readonly ParallelRange[]) => void;
   /** Clear every brush at once. */
   clearRanges: () => void;
   /** Which rows are kept, one byte per row. */
@@ -187,8 +191,8 @@ export function useCompareView(set: CompareSet): CompareView {
     scale: resolveColorScale(state.preferences.colorScaleId.value).scale,
     ranges,
     brushed: isBrushed(ranges),
-    setRange: useCallback((axisId: string, range: ParallelRange | null) => {
-      setRanges((previous) => ({ ...previous, [axisId]: range }));
+    setRange: useCallback((axisId: string, kept: readonly ParallelRange[]) => {
+      setRanges((previous) => ({ ...previous, [axisId]: kept }));
     }, []),
     clearRanges: useCallback(() => {
       setRanges({});
@@ -216,8 +220,8 @@ export function useCompareView(set: CompareSet): CompareView {
 }
 
 function isBrushed(ranges: ParallelRanges): boolean {
-  for (const range of Object.values(ranges)) {
-    if (range !== null && range !== undefined) return true;
+  for (const selection of Object.values(ranges)) {
+    if (parallelHasRange(selection)) return true;
   }
   return false;
 }

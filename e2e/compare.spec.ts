@@ -81,6 +81,59 @@ test('a pasted list is added to the set', async ({ page }) => {
   ).toHaveText('1.66', PREDICTED);
 });
 
+test('a file opened from the list card is read in the page', async ({
+  page,
+}) => {
+  await page.goto('/compare');
+
+  // The picker's input is hidden behind the button beside Add: the card is one
+  // box for a list however it arrives, so the file lands in the same set the
+  // paste box fills.
+  await page.locator('.compare-file-input').setInputFiles({
+    name: 'solvents.smi',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('CCO ethanol\nc1ccccc1 benzene\n'),
+  });
+
+  await expect(page.locator('.compare-row')).toHaveCount(2);
+  const structures = page.locator('.compare-cell__structure');
+  await expect(structures.nth(0)).toHaveAttribute('title', 'ethanol');
+  await expect(structures.nth(1)).toHaveAttribute('title', 'benzene');
+});
+
+test('a demo file is read into the page, names and all', async ({ page }) => {
+  await page.goto('/compare');
+
+  await page.getByRole('link', { name: '26 traded drugs' }).click();
+
+  const rows = page.locator('.compare-row');
+  await expect(rows).toHaveCount(26);
+  // The name the record carries, which is what the row is titled with.
+  await expect(
+    rows.first().locator('.compare-cell__structure'),
+  ).toHaveAttribute('title', 'aspirin');
+  await expect(rows.first().locator('.compare-cell__number').nth(2)).toHaveText(
+    '180.16',
+    PREDICTED,
+  );
+});
+
+test('a demo link is the file itself, so it can be saved instead', async ({
+  page,
+  request,
+}) => {
+  await page.goto('/compare');
+
+  const href = await page
+    .getByRole('link', { name: '34 solvents' })
+    .getAttribute('href');
+  expect(href).toBe('/demo/solvents.smi');
+
+  const file = await request.get(href ?? '');
+  expect(file.status()).toBe(200);
+  expect(await file.text()).toContain('CCO ethanol');
+});
+
 test('a set of one molecule says so in the singular', async ({ page }) => {
   await page.goto('/compare?smiles=CCO');
 
@@ -166,6 +219,99 @@ test('brushing the top of the molweight axis keeps the heaviest molecule alone',
 
   await page.getByRole('button', { name: 'Clear the brushes' }).click();
   await expect(page.locator('.compare-row')).toHaveCount(3);
+});
+
+test('a second interval on the same axis keeps the light and the heavy, not the middle', async ({
+  page,
+}) => {
+  await page.goto(`/compare?smiles=${THREE}`);
+  await expect(
+    page
+      .locator('.compare-row')
+      .first()
+      .locator('.compare-cell__number')
+      .first(),
+  ).toHaveText('1.66', PREDICTED);
+
+  const axis = page.locator('[data-parallel-brush="molecularWeight"]');
+  await axis.scrollIntoViewIfNeeded();
+  const box = await axis.boundingBox();
+  expect(box).not.toBeNull();
+  const x = (box?.x ?? 0) + (box?.width ?? 0) / 2;
+  const top = box?.y ?? 0;
+  const height = box?.height ?? 0;
+
+  // The top of the axis keeps caffeine, at 194.19.
+  await page.mouse.move(x, top + 30);
+  await page.mouse.down();
+  await page.mouse.move(x, top - 20, { steps: 6 });
+  await page.mouse.up();
+
+  await expect(page.locator('.compare-row')).toHaveCount(1);
+
+  // The bottom of it keeps benzene, at 78.11, without letting go of the first
+  // interval — which is the whole point: aspirin, in between, stays out.
+  await page.mouse.move(x, top + height - 30);
+  await page.mouse.down();
+  await page.mouse.move(x, top + height + 20, { steps: 6 });
+  await page.mouse.up();
+
+  await expect(page.locator('.compare-kept')).toContainText(
+    '2 of 3 molecules kept',
+  );
+  await expect(page.locator('.parallel-axis-band')).toHaveCount(2);
+  await expect(page.locator('.compare-row')).toContainText(['78.11', '194.19']);
+
+  // Clicking one interval drops that one alone.
+  await page.mouse.click(x, top + height - 10);
+
+  await expect(page.locator('.compare-row')).toHaveCount(1);
+  await expect(page.locator('.compare-row')).toContainText('194.19');
+});
+
+test('an axis dragged by its name changes places, and the address says so', async ({
+  page,
+}) => {
+  await page.goto(`/compare?smiles=${THREE}&axes=molecularWeight,logP,logS`);
+  await expect(page.locator('[data-parallel-axis]')).toHaveCount(3);
+
+  const names = page.locator('[data-parallel-label]');
+  await expect(names).toHaveText([/Molweight/, /cLogP/, /Solubility/]);
+
+  const first = names.first();
+  await first.scrollIntoViewIfNeeded();
+  const from = await first.boundingBox();
+  const target = await names.nth(1).boundingBox();
+  expect(from).not.toBeNull();
+  expect(target).not.toBeNull();
+
+  await page.mouse.move(
+    (from?.x ?? 0) + (from?.width ?? 0) / 2,
+    (from?.y ?? 0) + (from?.height ?? 0) / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    (target?.x ?? 0) + (target?.width ?? 0) / 2,
+    (from?.y ?? 0) + (from?.height ?? 0) / 2,
+    { steps: 8 },
+  );
+  await page.mouse.up();
+
+  await expect(names).toHaveText([/cLogP/, /Molweight/, /Solubility/]);
+  await expect(page).toHaveURL(
+    /axes=logP%2CmolecularWeight%2ClogS|axes=logP,molecularWeight,logS/,
+  );
+});
+
+test('the arrow keys move an axis without a pointer', async ({ page }) => {
+  await page.goto(`/compare?smiles=${THREE}&axes=molecularWeight,logP,logS`);
+  const names = page.locator('[data-parallel-label]');
+  await expect(names).toHaveText([/Molweight/, /cLogP/, /Solubility/]);
+
+  await names.first().focus();
+  await page.keyboard.press('ArrowRight');
+
+  await expect(names).toHaveText([/cLogP/, /Molweight/, /Solubility/]);
 });
 
 test('the address says which columns the plot draws, and what colours the lines', async ({

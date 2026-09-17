@@ -7,10 +7,11 @@
  */
 
 import { NonIdealState } from '@blueprintjs/core';
-import type { MouseEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 import { toSearch } from '../../share/query.ts';
 import { setCompareSmiles, withBase } from '../../state/index.ts';
+import { opensElsewhere } from '../../utils/inPageLink.ts';
 
 /**
  * Five drugs a chemist recognises, which between them cover most of the ranges
@@ -54,17 +55,5 @@ export function CompareEmpty(): ReactElement {
         </span>
       }
     />
-  );
-}
-
-/** Whether a click asked for a new tab or window rather than for this page. */
-function opensElsewhere(event: MouseEvent<HTMLAnchorElement>): boolean {
-  return (
-    event.defaultPrevented ||
-    event.button !== 0 ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey
   );
 }

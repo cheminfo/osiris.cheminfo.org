@@ -10,6 +10,12 @@
  * gesture rather than sixty times a second, and it filters on the very same
  * mask the figure paints with. A molecule still being predicted has no point on
  * any axis, so it is simply not drawn yet — it never collapses onto a zero.
+ *
+ * An axis keeps as many intervals as the reader brushes on it — the light
+ * molecules and the heavy ones, with nothing in between — and the axes can be
+ * dragged into any order by their names, since two columns only show their
+ * relationship when they stand next to each other. The order is the same one
+ * the capsules and the address carry, so a reordered figure is a link.
  */
 
 import { Button, NonIdealState } from '@blueprintjs/core';
@@ -66,10 +72,10 @@ export interface ComparePlotProps {
   scaleId: string;
   /** Called with the scale the reader chose. */
   onScaleId: (id: string) => void;
-  /** The interval each axis keeps, keyed by axis id. */
+  /** What each axis keeps, keyed by axis id: nothing, one interval, or several. */
   ranges: ParallelRanges;
-  /** Called when a brush is released. */
-  onRangeChange: (axisId: string, range: ParallelRange | null) => void;
+  /** Called when a brush is released, with every interval that axis now keeps. */
+  onRangeChange: (axisId: string, kept: readonly ParallelRange[]) => void;
   /** Called when every brush is to be cleared. */
   onClearRanges: () => void;
   /** Which rows the brushes keep, one byte per row. */
@@ -151,7 +157,9 @@ export function ComparePlot(props: ComparePlotProps): ReactElement {
             width={width}
             height={PLOT_HEIGHT}
             ranges={ranges}
+            several
             onRangeChange={onRangeChange}
+            onAxisOrder={onAxisKeys}
             included={included}
             hovered={hovered}
             onHoverChange={onHover}
@@ -189,6 +197,11 @@ export function ComparePlot(props: ComparePlotProps): ReactElement {
             onClick={onClearRanges}
           />
         ) : null}
+      </p>
+
+      <p className="compare-hint">
+        Drag down an axis to keep an interval, and again on bare axis for a
+        second one. Click a band to drop it. Drag an axis name to move the axis.
       </p>
     </div>
   );

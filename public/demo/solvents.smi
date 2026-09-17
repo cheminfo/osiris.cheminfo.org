@@ -1,0 +1,35 @@
+# Common laboratory solvents, from osiris.cheminfo.org.
+O water
+CO methanol
+CCO ethanol
+CC(C)O propan-2-ol
+CCCCO butan-1-ol
+OCCO ethylene glycol
+OCC(O)CO glycerol
+CC(C)=O acetone
+CCC(C)=O butanone
+CC#N acetonitrile
+CS(C)=O dimethyl sulfoxide
+CN(C)C=O dimethylformamide
+CN1CCCC1=O N-methylpyrrolidone
+NC=O formamide
+C1CCOC1 tetrahydrofuran
+C1COCCO1 dioxane
+CCOCC diethyl ether
+CCOC(C)=O ethyl acetate
+CC(=O)O acetic acid
+OC=O formic acid
+ClCCl dichloromethane
+ClC(Cl)Cl chloroform
+ClC(Cl)(Cl)Cl tetrachloromethane
+CCCCCC hexane
+C1CCCCC1 cyclohexane
+c1ccccc1 benzene
+Cc1ccccc1 toluene
+Cc1ccccc1C o-xylene
+c1ccncc1 pyridine
+Nc1ccccc1 aniline
+Oc1ccccc1 phenol
+C[N+](=O)[O-] nitromethane
+S=C=S carbon disulfide
+CCN(CC)CC triethylamine

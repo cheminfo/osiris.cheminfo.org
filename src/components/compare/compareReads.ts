@@ -9,6 +9,7 @@
  * loads.
  */
 
+import type { ReadResult } from '../../input/types.ts';
 import type { MoleculeRow } from '../../state/index.ts';
 import { MAX_MOLECULES, failReading, state } from '../../state/index.ts';
 
@@ -28,6 +29,8 @@ export interface ReadRequest {
   text?: string;
   /** The file to read, when one was dropped or chosen. */
   file?: File;
+  /** The address to fetch, when a file the site ships was opened. */
+  url?: string;
   /**
    * Whether this came from the address, in which case a structure the set
    * already holds is skipped rather than added again.
@@ -59,10 +62,17 @@ export async function readRequest(
   const { appendMolecules, problemLines, readMoleculeFile, readMolecules } =
     await import('../../input/index.ts');
   const options = { signal, onProgress };
-  const result =
-    request.file === undefined
-      ? await readMolecules(request.text ?? '', options)
-      : await readMoleculeFile(request.file, options);
+  let result: ReadResult;
+  if (request.file !== undefined) {
+    result = await readMoleculeFile(request.file, options);
+  } else if (request.url !== undefined) {
+    result = await readMolecules(
+      await fetchBytes(request.url, signal),
+      options,
+    );
+  } else {
+    result = await readMolecules(request.text ?? '', options);
+  }
 
   const held = state.data.molecules.peek();
   // A link adds what the set does not already hold: arriving from the explorer
@@ -110,6 +120,36 @@ export async function restoreStored(publish: PublishRows): Promise<void> {
   if (stored.length === 0) return;
   const rows = await restoreRows(stored);
   if (rows.length > 0) publish(rows, []);
+}
+
+/**
+ * Fetch a file the site ships, as the bytes it was written with.
+ *
+ * Never `response.text()`: the reader decodes what it is given, and a file
+ * written in latin1 — which most SD files are — comes back through `text()`
+ * with a mojibaked name in every row.
+ * @param url - The address, mount path included.
+ * @param signal - Stops the fetch along with the read it belongs to.
+ * @returns The file's bytes.
+ */
+async function fetchBytes(
+  url: string,
+  signal: AbortSignal,
+): Promise<Uint8Array> {
+  let response: Response;
+  try {
+    response = await fetch(url, { signal });
+  } catch (error) {
+    throw new Error('This file could not be fetched, so nothing was added.', {
+      cause: error,
+    });
+  }
+  if (!response.ok) {
+    throw new Error(
+      `This file answered ${response.status}, so nothing was added.`,
+    );
+  }
+  return new Uint8Array(await response.arrayBuffer());
 }
 
 function holds(rows: readonly MoleculeRow[], idCode: string): boolean {
