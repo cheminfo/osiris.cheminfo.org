@@ -7,7 +7,22 @@
  * `AboutPage` stops rendering is caught rather than silently lost.
  */
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { expect, test } from '@playwright/test';
+
+/** The released version, which the build reads from the root `package.json`. */
+const VERSION = (
+  JSON.parse(
+    readFileSync(join(import.meta.dirname, '..', 'package.json'), 'utf8'),
+  ) as { version: string }
+).version;
+
+/** What the hero badge reads: that release, and when the build was made. */
+const BUILD_BADGE = new RegExp(
+  String.raw`^${VERSION.replaceAll('.', String.raw`\.`)} · \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC$`,
+);
 
 /** The five things `ABOUT.can` says a visitor can do here. */
 const CAN = [
@@ -144,7 +159,11 @@ test('the licence and the sources are named, and the issue tracker with them', a
 test('the About says which build is running', async ({ page }) => {
   await page.goto('/about');
 
-  await expect(page.locator('.about-licence')).toContainText(
-    /Running version \d+\.\d+\.\d+/,
+  // The repository is public, so the release a visitor quotes is one click away.
+  const version = page.locator('.about-hero a.about-version');
+  await expect(version).toHaveText(BUILD_BADGE);
+  await expect(version).toHaveAttribute(
+    'href',
+    `https://github.com/cheminfo/osiris.cheminfo.org/releases/tag/v${VERSION}`,
   );
 });
