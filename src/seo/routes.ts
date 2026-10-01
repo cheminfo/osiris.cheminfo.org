@@ -49,7 +49,7 @@ export const FIXED_ROUTES: readonly RouteMeta[] = [
     path: '/about',
     title: 'About — what this tool predicts and what it borrows',
     description:
-      'What these predictions are, how far they can be trusted, the libraries the tool borrows, how to cite it, and where to report a problem.',
+      'What these toxicity and property predictions are, how far they can be trusted, the libraries the tool borrows, and how to cite it.',
     short: 'About',
     note: 'what it predicts, and what it borrows',
   },
