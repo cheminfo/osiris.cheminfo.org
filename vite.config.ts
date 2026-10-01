@@ -6,6 +6,7 @@ import { cheminfoBuildInfo, cheminfoPrerender } from 'react-cheminfo/vite';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 
+import { pageContent } from './src/seo/content.ts';
 import { NOSCRIPT_ROUTES, PAGE_ROUTES } from './src/seo/routes.ts';
 import { configuredSiteUrl } from './src/state/site.ts';
 import { oclResources } from './vite-ocl-resources.ts';
@@ -41,6 +42,9 @@ export default defineConfig({
     cheminfoPrerender({
       site: 'osiris',
       routes: PAGE_ROUTES,
+      // What each address says for itself: without it every address ships the
+      // same body, this site's menu, and a search engine folds them into one.
+      content: pageContent,
       // The published address, mount path included, so every canonical link,
       // `og:url`, card and sitemap entry starts where the site is served.
       origin: configuredSiteUrl(),
