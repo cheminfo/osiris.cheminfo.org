@@ -71,8 +71,6 @@ test('the sections are the ones the family writes, in the family order', async (
     'What you can do here',
     'Built on',
     'How to cite',
-    'Licence and source',
-    'Found a problem?',
   ]);
 });
 
@@ -138,32 +136,25 @@ test('OSIRIS is what the site asks to be cited, with its DOI', async ({
   await expect(doi).toContainText('10.1021/ci800305f');
 });
 
-test('the licence and the sources are named, and the issue tracker with them', async ({
+test('the About says nothing about a licence, sources or a tracker', async ({
   page,
 }) => {
   await page.goto('/about');
 
-  const licence = page.locator('.about-licence');
-  await expect(licence).toContainText('MIT, © cheminfo.');
-  await expect(
-    licence.getByRole('link', {
-      name: 'github.com/cheminfo/osiris.cheminfo.org',
-    }),
-  ).toHaveAttribute('href', 'https://github.com/cheminfo/osiris.cheminfo.org');
-  await expect(page.locator('.about-issues').getByRole('link')).toHaveAttribute(
-    'href',
-    'https://github.com/cheminfo/osiris.cheminfo.org/issues',
-  );
+  await expect(page.locator('.about-licence')).toHaveCount(0);
+  await expect(page.locator('.about-issues')).toHaveCount(0);
 });
 
-test('the About says which build is running', async ({ page }) => {
+test('the About says which build is running, and links nowhere', async ({
+  page,
+}) => {
   await page.goto('/about');
 
-  // The repository is public, so the release a visitor quotes is one click away.
-  const version = page.locator('.about-hero a.about-version');
-  await expect(version).toHaveText(BUILD_BADGE);
-  await expect(version).toHaveAttribute(
-    'href',
-    `https://github.com/cheminfo/osiris.cheminfo.org/releases/tag/v${VERSION}`,
+  await expect(page.locator('.about-hero .about-version')).toHaveText(
+    BUILD_BADGE,
+  );
+  await expect(page.locator('a.about-version')).toHaveCount(0);
+  await expect(page.locator('.about-build')).toContainText(
+    /Built \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC/,
   );
 });

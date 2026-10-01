@@ -30,13 +30,6 @@ import rehypeSanitize from 'rehype-sanitize';
 import source from '../data/method.md?raw';
 import { resolveMethodFigure } from '../method/figures.ts';
 
-/** Where the text and the figures were published, and still are. */
-const ORIGINAL_PAGE =
-  'https://cheminfo.github.io/www.c6h6.org/molecules/propertyExplorer/';
-
-/** The repository this copy was taken from. */
-const SOURCE_REPOSITORY = 'https://github.com/cheminfo/www.c6h6.org';
-
 /**
  * The method page.
  * @returns Thomas Sander's description of the predictions, with its figures.
@@ -47,15 +40,7 @@ export function Method(): ReactElement {
       <p className="method-attribution">
         Thomas Sander wrote this description of the OSIRIS Property Explorer at
         Actelion Pharmaceuticals Ltd. (now Idorsia), Allschwil, Switzerland. The
-        text and the figures are his, copied from{' '}
-        <a href={ORIGINAL_PAGE} target="_blank" rel="noopener noreferrer">
-          the original page
-        </a>{' '}
-        and its repository,{' '}
-        <a href={SOURCE_REPOSITORY} target="_blank" rel="noopener noreferrer">
-          cheminfo/www.c6h6.org
-        </a>
-        .
+        text and the figures are his, reproduced here as he published them.
       </p>
 
       <Markdown

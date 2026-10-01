@@ -41,13 +41,6 @@ test('every borrowed work the site runs on is named, and resolves', () => {
     'React',
     'Vite',
   ]);
-  expect(about.license).toBe('MIT');
-  expect(about.repository).toBe(
-    'https://github.com/cheminfo/osiris.cheminfo.org',
-  );
-  expect(about.issues).toBe(
-    'https://github.com/cheminfo/osiris.cheminfo.org/issues',
-  );
 });
 
 test('the tool this one replaces is credited, with the author who wrote it', () => {
